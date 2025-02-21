@@ -4,12 +4,6 @@
 
 Dynamic Blacklist Updater is a WordPress plugin that automatically fetches a blacklist from a remote source and updates the "Disallowed Comment Keys" and "Comment Moderation" settings. It tracks how many times the blacklist stops comments and displays detailed status information, including the last updated time and the total number of blacklist entries. The plugin integrates with popular form plugins like WPForms, Formidable Forms, Contact Form 7, and Gravity Forms.
 
-## Badges
-
-[![License: GPL v2](https://img.shields.io/badge/License-GPL_v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)  
-[![WordPress Plugin](https://img.shields.io/wordpress/plugin/v/dynamic-blacklist-updater.svg?style=flat)](https://wordpress.org/plugins/dynamic-blacklist-updater/)  
-[![Build Status](https://img.shields.io/travis/yourusername/dynamic-blacklist-updater.svg?style=flat)](https://travis-ci.org/yourusername/dynamic-blacklist-updater)
-
 ## Features
 
 - **Automatic Updates:** The plugin fetches the blacklist automatically at configurable intervals.
