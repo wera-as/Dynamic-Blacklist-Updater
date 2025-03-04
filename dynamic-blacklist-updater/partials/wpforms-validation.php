@@ -1,5 +1,7 @@
 <?php
 
+namespace DynamicBlacklistUpdater\Validation;
+
 /**
  * WPForms Validation for Dynamic Blacklist Updater.
  *

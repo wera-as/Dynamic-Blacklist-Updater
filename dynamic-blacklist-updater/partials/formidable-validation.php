@@ -1,5 +1,7 @@
 <?php
 
+namespace DynamicBlacklistUpdater\Validation;
+
 /**
  * Formidable Forms Validation for Dynamic Blacklist Updater.
  *

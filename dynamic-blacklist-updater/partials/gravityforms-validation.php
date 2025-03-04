@@ -1,5 +1,7 @@
 <?php
 
+namespace DynamicBlacklistUpdater\Validation;
+
 /**
  * Gravity Forms Validation for Dynamic Blacklist Updater.
  *

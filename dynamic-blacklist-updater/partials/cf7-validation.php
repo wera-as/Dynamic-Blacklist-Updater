@@ -1,5 +1,7 @@
 <?php
 
+namespace DynamicBlacklistUpdater\Validation;
+
 /**
  * Contact Form 7 Validation for Dynamic Blacklist Updater.
  *
@@ -7,7 +9,6 @@
  * If any blacklisted term is found in the submitted values,
  * the hit counter is incremented and a validation error is added.
  */
-
 function dbu_cf7_validate($result, $tags)
 {
     // Retrieve the blacklist from options.
@@ -43,4 +44,4 @@ function dbu_cf7_validate($result, $tags)
     }
     return $result;
 }
-add_filter('wpcf7_validate', 'dbu_cf7_validate', 10, 2);
+add_filter('wpcf7_validate', __NAMESPACE__ . '\dbu_cf7_validate', 10, 2);
