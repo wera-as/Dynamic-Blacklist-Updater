@@ -22,9 +22,9 @@ Before installing the plugin, ensure you have:
 ## Installation
 1. **Download or Clone the Repository**
    - Download the ZIP file from GitHub or clone the repository using:
-   '''
+   ```bash
    git clone https://github.com/yourusername/dynamic-blacklist-updater.git
-   '''
+   ```
 2. **Upload to WordPress**
    - If you downloaded the ZIP file, unzip it.
    - Upload the entire `dynamic-blacklist-updater` folder to the `/wp-content/plugins/` directory of your WordPress installation.
@@ -58,13 +58,16 @@ Dynamic Blacklist Updater streamlines the process of managing blacklist data:
   
 
 Below is a sample code snippet demonstrating how to enqueue the plugin’s scripts and styles:
-'''
+```php
 function dbu_enqueue_scripts() {
-    wp_enqueue_style('dbu-admin-style', plugin_dir_url(__FILE__) . 'admin.css');
-    wp_enqueue_script('dbu-server-time', plugin_dir_url(__FILE__) . 'server-time.js', array('jquery'), '1.0', true);
+
+wp_enqueue_style('dbu-admin-style', plugin_dir_url(__FILE__) . 'admin.css');
+
+wp_enqueue_script('dbu-server-time', plugin_dir_url(__FILE__) . 'server-time.js', array('jquery'), '1.0', true);
 }
+
 add_action('admin_enqueue_scripts', 'dbu_enqueue_scripts');
-'''
+```
 
 ## File Structure
 A breakdown of the plugin's file structure and their purposes:
