@@ -20,6 +20,7 @@ function dbu_activate_plugin()
     if (false === get_option('dbu_blacklist_fallback_url')) {
         update_option('dbu_blacklist_fallback_url', DBU_DEFAULT_BLACKLIST_FALLBACK_URL);
     }
+
     // Schedule our WP Cron event.
     dbu_reschedule_event();
 }
@@ -41,6 +42,7 @@ function dbu_reschedule_event()
 {
     wp_clear_scheduled_hook('dbu_update_blacklist_event');
     $interval = get_option('dbu_update_interval', 'daily');
+
     if (! wp_next_scheduled('dbu_update_blacklist_event')) {
         wp_schedule_event(time(), $interval, 'dbu_update_blacklist_event');
     }

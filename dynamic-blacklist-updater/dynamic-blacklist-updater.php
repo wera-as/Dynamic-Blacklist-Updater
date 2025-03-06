@@ -3,7 +3,7 @@
 Plugin Name: Dynamic Blacklist Updater
 Plugin URI: https://wera.no
 Description: Dynamically fetches a blacklist and updates WordPress settings.
-Version: 1.1.4
+Version: 1.1.5
 Author: Wera AS
 Author URI: https://wera.no
 License: GPL2
@@ -17,7 +17,7 @@ namespace DynamicBlacklistUpdater;
 if (!defined('ABSPATH')) exit;
 
 // Load branding.
-require_once plugin_dir_path(__FILE__) . 'admin/branding.php';
+require_once plugin_dir_path(__FILE__) . 'admin/icons.php';
 
 // dynamic-blacklist-updater.php (your main plugin file)
 define('DBU_PLUGIN_URL', plugin_dir_url(__FILE__));
@@ -53,3 +53,20 @@ if (defined('WPCF7_VERSION')) {
 if (class_exists('GFForms')) {
     require_once plugin_dir_path(__FILE__) . 'partials/gravityforms-validation.php';
 }
+
+add_action('admin_footer', function () {
+    $screen = get_current_screen();
+    if (isset($screen->id) && in_array($screen->id, [
+        'toplevel_page_dynamic-blacklist-updater',
+        'settings_page_dynamic-blacklist-updater'
+    ], true)) {
+?>
+        <script type="text/javascript">
+            jQuery(document).ready(function($) {
+                $('#wpfooter').remove();
+                $('#wpbody-content').css('padding-bottom', '0');
+            });
+        </script>
+<?php
+    }
+});

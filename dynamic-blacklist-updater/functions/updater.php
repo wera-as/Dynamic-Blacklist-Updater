@@ -27,7 +27,7 @@ function dbu_fetch_blacklist()
     }
 
     $blacklist_array = array_filter(array_map('trim', explode("\n", $body)));
-    if (!empty($blacklist_array)) {
+    if (! empty($blacklist_array)) {
         $blacklist = implode("\n", $blacklist_array);
         update_option('blacklist_keys', $blacklist);
         update_option('moderation_keys', $blacklist);
@@ -54,7 +54,7 @@ function dbu_fetch_blacklist_fallback()
         return false;
     }
     $blacklist_array = array_filter(array_map('trim', explode("\n", $body)));
-    if (!empty($blacklist_array)) {
+    if (! empty($blacklist_array)) {
         $blacklist = implode("\n", $blacklist_array);
         update_option('blacklist_keys', $blacklist);
         update_option('moderation_keys', $blacklist);
@@ -80,7 +80,7 @@ function dbu_empty_blacklist()
 /**
  * Count blacklist hits when a comment is processed.
  *
- * @param mixed $approved The current approval status.
+ * @param mixed $approved    The current approval status.
  * @param array $commentdata The comment data.
  * @return mixed Updated approval status.
  */

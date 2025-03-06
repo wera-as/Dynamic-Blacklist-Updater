@@ -1,20 +1,65 @@
-/* Bootstrap-inspired, clean admin UI */
+/* CSS Variables for common values */
+:root {
+    --primary-color: #2271b1;
+    --primary-color-dark: #1c5b9c;
+    --border-color: #dee2e6;
+    --text-color-dark: #343a40;
+    --bg-color: #ffffff;
+    --shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    --description-color: #6c757d;
+    --warning-bg: #fff3cd;
+    --warning-border: #ffeeba;
+    --warning-text: #856404;
+    --input-padding: 0.5rem;
+}
+
+/* Utility Class for Monospaced Font */
+.mono-font {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+/* Shared Input Field Styles */
+#dbu_user_defined_terms,
+.dbu-blacklist-textarea,
+.dbu-input-with-lock input {
+    display: block;
+    width: 100%;
+    padding: var(--input-padding);
+    border: 1px solid var(--border-color);
+    border-radius: 0.25rem;
+    box-shadow: inset var(--shadow);
+    margin-top: 0.5rem;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+#dbu_user_defined_terms:focus,
+.dbu-blacklist-textarea:focus,
+.dbu-input-with-lock input:focus {
+    background-color: #e9ecef;
+    outline: none;
+}
+
+/* Bootstrap-inspired, Clean Admin UI */
 .dbu-container {
     max-width: 900px;
-    margin: 0px;
+    margin: 0;
     padding: 2rem;
 }
 
 .dbu-top-bar {
     display: flex;
-    font-family: 'Courier New', Courier, monospace;
     margin-bottom: 3rem;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
     user-select: none;
 }
 
+/* Apply monospaced font via utility class or directly */
 .dbu-text-logo {
     font-size: 2.5rem;
     color: #000;
+    font-family: 'Courier New', Courier, monospace;
 }
 
 .dbu-version {
@@ -23,19 +68,19 @@
 }
 
 .dbu-card {
-    background-color: #ffffff;
-    border: 1px solid #dee2e6;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
     border-radius: 0.25rem;
     padding: 1.5rem;
     margin-bottom: 1.5rem;
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    box-shadow: var(--shadow);
 }
 
 .dbu-card h2 {
     font-size: 1.5rem;
-    color: #343a40;
+    color: var(--text-color-dark);
     margin-top: 0;
-    border-bottom: 1px solid #dee2e6;
+    border-bottom: 1px solid var(--border-color);
     padding-bottom: 0.5rem;
     margin-bottom: 1rem;
 }
@@ -52,8 +97,11 @@
 
 .dbu-description {
     font-size: 0.75rem;
-    color: #6c757d;
+    color: var(--description-color);
     margin: 0;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
     user-select: none;
 }
 
@@ -86,7 +134,7 @@
 .dbu-status-item p {
     margin-bottom: 0.5rem;
     font-weight: 600;
-    color: #343a40;
+    color: var(--text-color-dark);
 }
 
 .plugin-info {
@@ -112,22 +160,27 @@
     border-radius: 4px;
     color: #fff;
     font-weight: bold;
+    background-color: var(--primary-color);
     transition: background-color 0.3s ease;
-    cursor: default;
+    cursor: pointer;
 }
 
+.dbu-status-button:hover {
+    background-color: var(--primary-color-dark);
+}
 
-/* Style the server time element for a neat look */
+/* Style the server time element */
 #server-time {
-    font-family: 'Courier New', Courier, monospace;
     font-size: 1.2rem;
     display: inline-block;
     margin: auto;
     width: 100%;
+    font-family: 'Courier New', Courier, monospace;
 }
 
 #server-time strong {
-    color: #2271b1;
+    color: var(--primary-color);
+    font-family: 'Courier New', Courier, monospace;
 }
 
 #disallowed_keys,
@@ -158,12 +211,20 @@
     pointer-events: none;
 }
 
+/* Container for the two buttons: left aligned */
+.dbu-user-defined-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-start;
+    margin: 1rem 0;
+}
+
 .dbu-warning-box {
-    background-color: #fff3cd;
-    border: 1px solid #ffeeba;
+    background-color: var(--warning-bg);
+    border: 1px solid var(--warning-border);
     padding: 1rem;
     border-radius: 0.25rem;
-    color: #856404;
+    color: var(--warning-text);
     font-weight: bold;
 }
 
@@ -177,14 +238,17 @@
     font-weight: normal;
 }
 
-/* Modern styled checkbox */
+/* Modern Styled Checkbox */
 .dbu-checkbox-label {
     display: inline-flex;
     align-items: center;
     cursor: pointer;
     font-size: 0.9rem;
-    user-select: none;
     margin: 1rem 0;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .dbu-checkbox-label input[type="checkbox"] {
@@ -193,16 +257,23 @@
     width: 20px;
     height: 20px;
     border: 2px solid #ccc;
-    border-radius: 0px;
+    border-radius: 0;
     margin-right: 8px;
     position: relative;
     cursor: pointer;
     transition: background 0.2s ease, border-color 0.2s ease;
 }
 
+.dbu-checkbox-label input[type="checkbox"]:checked::before {
+	content:none !important;
+	margin: -.1875rem 0 0 -.25rem;
+	height: 1.3125rem;
+	width: 1.3125rem;
+}
+
 .dbu-checkbox-label input[type="checkbox"]:checked {
-    background: #2271b1;
-    border-color: #2271b1;
+    background: var(--primary-color);
+    border-color: var(--primary-color);
 }
 
 .dbu-checkbox-label input[type="checkbox"]:checked::after {
@@ -221,19 +292,25 @@
 }
 
 .dbu-blacklist-textarea {
-    width: 100%;
-    border: 1px solid #dee2e6;
-    border-radius: 0.25rem;
-    padding: 0.75rem;
-    background-color: #ffffff;
-    box-shadow: inset 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-    color: #343a40;
-    resize: vertical;
-    transition: background-color 0.3s ease;
-    user-select: none;
     display: none;
+    background-color: var(--bg-color);
+    resize: vertical;
+    color: var(--text-color-dark);
 }
 
-.dbu-blacklist-textarea:focus {
-    background-color: #e9ecef;
+/* Container for Input and Lock Icon */
+.dbu-input-with-lock {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+/* Padlock Icon Appears Outside the Input on the Right */
+.dbu-lock-icon {
+    margin-left: 0.5rem;
+    cursor: pointer;
+    font-size: 1.2rem;
+    background: none;
+    border: none;
+    outline: none;
 }

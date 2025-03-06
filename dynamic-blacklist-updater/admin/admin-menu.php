@@ -1,4 +1,5 @@
 <?php
+
 namespace DynamicBlacklistUpdater\Admin;
 
 /**
@@ -9,6 +10,7 @@ namespace DynamicBlacklistUpdater\Admin;
 function dbu_register_menu()
 {
     $menu_location = get_option('dbu_menu_location', 'top');
+
     if ($menu_location === 'top') {
         add_menu_page(
             'Dynamic Blacklist Updater',

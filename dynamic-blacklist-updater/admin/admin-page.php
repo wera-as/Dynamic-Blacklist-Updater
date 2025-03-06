@@ -20,7 +20,23 @@ function dbu_render_admin_page()
         $new_primary_url   = esc_url_raw(trim($_POST['dbu_blacklist_url']));
         $new_fallback_url  = esc_url_raw(trim($_POST['dbu_blacklist_fallback_url']));
         if (
-            in_array($new_interval, ['15min', '30min', 'hourly', '2hours', '4hours', '6hours', '12hours', 'daily', 'weekly', 'biweekly', 'monthly'], true) &&
+            in_array(
+                $new_interval,
+                [
+                    '15min',
+                    '30min',
+                    'hourly',
+                    '2hours',
+                    '4hours',
+                    '6hours',
+                    '12hours',
+                    'daily',
+                    'weekly',
+                    'biweekly',
+                    'monthly'
+                ],
+                true
+            ) &&
             in_array($new_menu_location, ['top', 'settings'], true)
         ) {
             update_option('dbu_update_interval', $new_interval);
@@ -57,13 +73,30 @@ function dbu_render_admin_page()
         }
     }
 
+    // Process User Defined Block Terms update.
+    if (isset($_POST['dbu_user_defined_update'])) {
+        check_admin_referer('dbu_user_defined_update_action', 'dbu_user_defined_update_nonce');
+        $user_defined_input = sanitize_text_field($_POST['dbu_user_defined_terms']);
+        $terms_array        = array_filter(array_map('trim', explode(',', $user_defined_input)));
+        $terms_array        = array_unique($terms_array);
+        update_option('dbu_user_defined_blacklist', $terms_array);
+        $message = 'User defined terms updated.';
+    }
+
+    // Process Clear User Defined Block Terms action.
+    if (isset($_POST['dbu_clear_user_defined'])) {
+        check_admin_referer('dbu_clear_user_defined_action', 'dbu_clear_user_defined_nonce');
+        update_option('dbu_user_defined_blacklist', array());
+        $message = 'User defined terms cleared.';
+    }
+
     // Retrieve current data.
     $current_blacklist    = get_option('blacklist_keys', '');
+    $blacklist_count      = get_option('dbu_blacklist_count', 0);
     $current_interval     = get_option('dbu_update_interval', 'daily');
     $last_updated         = get_option('dbu_last_updated');
     $last_updated_display = $last_updated ? date(get_option('date_format') . ' ' . get_option('time_format'), strtotime($last_updated)) : 'Never';
     $hit_count            = get_option('dbu_blacklist_hits', 0);
-    $blacklist_count      = get_option('dbu_blacklist_count', 0);
 
     $next_update = wp_next_scheduled('dbu_update_blacklist_event');
     if ($next_update) {
@@ -73,18 +106,24 @@ function dbu_render_admin_page()
     }
 
     $interval_options = [
-        '15min'   => 'Every 15 Minutes',
-        '30min'   => 'Every 30 Minutes',
-        'hourly'  => 'Hourly',
-        '2hours'  => 'Every 2 Hours',
-        '4hours'  => 'Every 4 Hours',
-        '6hours'  => 'Every 6 Hours',
-        '12hours' => 'Every 12 Hours',
-        'daily'   => 'Daily',
-        'weekly'  => 'Weekly',
+        '15min'    => 'Every 15 Minutes',
+        '30min'    => 'Every 30 Minutes',
+        'hourly'   => 'Hourly',
+        '2hours'   => 'Every 2 Hours',
+        '4hours'   => 'Every 4 Hours',
+        '6hours'   => 'Every 6 Hours',
+        '12hours'  => 'Every 12 Hours',
+        'daily'    => 'Daily',
+        'weekly'   => 'Weekly',
         'biweekly' => 'Every 2 Weeks',
-        'monthly' => 'Monthly',
+        'monthly'  => 'Monthly',
     ];
+
+    // Retrieve user defined blacklist.
+    $user_defined_blacklist = get_option('dbu_user_defined_blacklist', array());
+    $user_defined_terms     = is_array($user_defined_blacklist) ? implode(', ', $user_defined_blacklist) : '';
+    $user_defined_count     = is_array($user_defined_blacklist) ? count($user_defined_blacklist) : 0;
+    $total_entries          = $blacklist_count + $user_defined_count;
 
     // Check for additional form plugins.
     $wpforms_active    = class_exists('WPForms') ? true : false;
@@ -108,7 +147,8 @@ function dbu_render_admin_page()
     <div class="wrap dbu-container">
         <div class="dbu-top-bar">
             <p>
-                <span class="dbu-text-logo">Dynamic Blacklist Updater</span> <span class="dbu-version">v<?php echo esc_html($plugin_version); ?></span><br>
+                <span class="dbu-text-logo">Dynamic Blacklist Updater</span>
+                <span class="dbu-version">v<?php echo esc_html($plugin_version); ?></span><br>
                 <span id="server-time" data-server-timestamp="<?php echo time(); ?>">
                     <?php echo date('j. F, Y \--:--:--'); ?>
                 </span>
@@ -141,7 +181,7 @@ function dbu_render_admin_page()
         <!-- Settings Card -->
         <div class="dbu-card">
             <h2>Settings</h2>
-            <form method="post" action="">
+            <form method="post" action="" style="margin-bottom:0rem;">
                 <?php wp_nonce_field('dbu_settings_update_action'); ?>
                 <div class="dbu-form-group">
                     <label class="dbu-label" for="dbu_update_interval">Update Interval</label>
@@ -164,17 +204,24 @@ function dbu_render_admin_page()
                 </div>
                 <div class="dbu-form-group">
                     <label class="dbu-label" for="dbu_blacklist_url">Primary Blacklist URL</label>
-                    <input type="text" name="dbu_blacklist_url" id="dbu_blacklist_url" value="<?php echo esc_attr(get_option('dbu_blacklist_url', DBU_DEFAULT_BLACKLIST_URL)); ?>" style="width:100%;">
+                    <div class="dbu-input-with-lock">
+                        <input type="text" name="dbu_blacklist_url" id="dbu_blacklist_url" value="<?php echo esc_attr(get_option('dbu_blacklist_url', DBU_DEFAULT_BLACKLIST_URL)); ?>" readonly="readonly">
+                        <!-- Default icon is an open padlock (indicating field is locked) -->
+                        <span class="dbu-lock-icon" data-target="#dbu_blacklist_url">🔓</span>
+                    </div>
                     <p class="dbu-description">Enter the URL for the primary blacklist source.</p>
                 </div>
                 <div class="dbu-form-group">
                     <label class="dbu-label" for="dbu_blacklist_fallback_url">Fallback Blacklist URL</label>
-                    <input type="text" name="dbu_blacklist_fallback_url" id="dbu_blacklist_fallback_url" value="<?php echo esc_attr(get_option('dbu_blacklist_fallback_url', DBU_DEFAULT_BLACKLIST_FALLBACK_URL)); ?>" style="width:100%;">
+                    <div class="dbu-input-with-lock">
+                        <input type="text" name="dbu_blacklist_fallback_url" id="dbu_blacklist_fallback_url" value="<?php echo esc_attr(get_option('dbu_blacklist_fallback_url', DBU_DEFAULT_BLACKLIST_FALLBACK_URL)); ?>" readonly="readonly">
+                        <span class="dbu-lock-icon" data-target="#dbu_blacklist_fallback_url">🔓</span>
+                    </div>
                     <p class="dbu-description">Enter the URL for the fallback blacklist source.</p>
                 </div>
                 <?php submit_button('Save Settings', 'primary', 'dbu_settings_update'); ?>
             </form>
-            <form method="post" action="" style="margin-top:1rem;">
+            <form method="post" action="" style="margin-top:0rem;">
                 <?php wp_nonce_field('dbu_reset_urls_action'); ?>
                 <input type="submit" name="dbu_reset_urls" class="button button-secondary" value="Reset Blacklist URLs to Default">
             </form>
@@ -183,7 +230,6 @@ function dbu_render_admin_page()
         <!-- Blacklist Information Card -->
         <div class="dbu-card">
             <h2>Blacklist Information</h2>
-
             <p><strong>Last Updated:</strong> <?php echo esc_html($last_updated_display); ?></p>
             <p><strong>Next Update:</strong> <?php echo esc_html($next_update_display); ?></p>
             <p><strong>Blacklist Hits:</strong> <?php echo esc_html($hit_count); ?></p>
@@ -191,7 +237,23 @@ function dbu_render_admin_page()
 
         <!-- Current Blacklist Card -->
         <div class="dbu-card">
-            <h2>Current Blacklist<span class="dbu-entries-count">&emsp;<?php echo esc_html($blacklist_count); ?> entries</span></h2>
+            <h2>Current Blacklist<span class="dbu-entries-count">&emsp;<?php echo esc_html($total_entries); ?> entries and <?php echo esc_html($user_defined_count); ?> user defined entries</span></h2>
+            <form method="post" action="">
+                <?php
+                // Create separate nonce fields with unique names.
+                wp_nonce_field('dbu_user_defined_update_action', 'dbu_user_defined_update_nonce');
+                wp_nonce_field('dbu_clear_user_defined_action', 'dbu_clear_user_defined_nonce');
+                ?>
+                <div class="dbu-form-group">
+                    <label class="dbu-label" for="dbu_user_defined_terms">Enter custom terms (comma separated):</label>
+                    <input type="text" name="dbu_user_defined_terms" id="dbu_user_defined_terms" value="<?php echo esc_attr($user_defined_terms); ?>">
+                    <p class="dbu-description">These custom terms will be merged with the system blacklist.</p>
+                </div>
+                <div class="dbu-user-defined-buttons">
+                    <input type="submit" name="dbu_user_defined_update" class="button button-primary" value="Save User Defined Terms">
+                    <input type="submit" name="dbu_clear_user_defined" class="button button-secondary" value="Clear User Defined Terms">
+                </div>
+            </form>
             <div class="dbu-warning-box">
                 <p><strong>⚠ Warning:</strong> The blacklist may contain extensive and offensive entries, including content related to:</p>
                 <ul>
@@ -219,6 +281,7 @@ function dbu_render_admin_page()
                 });
             });
         </script>
+
         <!-- Plugin Status Card -->
         <div class="dbu-card">
             <h2>Supported Plugin Status</h2>
@@ -279,7 +342,11 @@ function dbu_render_admin_page()
                 </div>
             </div>
         </div>
-
+        <div class="dbu-card">
+            <h2>Credits</h2>
+            <p><strong>Dynamic Blacklist Updater</strong> Plugin is developed by <a href="https://wera.no" target="_blank">Wera AS</a>.</p>
+            <p>Special thanks to <a href="https://github.com/splorp/wordpress-comment-blacklist" target="_blank">Splorp's WordPress Comment Blacklist</a> for the blacklist.</p>
+        </div>
     </div>
 <?php
 }

@@ -4,7 +4,7 @@ namespace DynamicBlacklistUpdater\Admin;
 
 function dbu_enqueue_admin_scripts($hook)
 {
-    if (!in_array($hook, ['toplevel_page_dynamic-blacklist-updater', 'settings_page_dynamic-blacklist-updater'])) {
+    if (! in_array($hook, ['toplevel_page_dynamic-blacklist-updater', 'settings_page_dynamic-blacklist-updater'], true)) {
         return;
     }
 
@@ -23,6 +23,14 @@ function dbu_enqueue_admin_scripts($hook)
         '1.0',
         true
     );
+
+    wp_enqueue_script(
+        'lock-input-fields.js',
+        DBU_PLUGIN_URL . 'includes/js/lock-input-fields.js',
+        [],
+        '1.0',
+        true
+    );
 }
 add_action('admin_enqueue_scripts', __NAMESPACE__ . '\dbu_enqueue_admin_scripts');
 
@@ -30,7 +38,7 @@ function dbu_enqueue_admin_styles($hook)
 {
     $screen = get_current_screen();
 
-    if (!isset($screen->id) || !in_array($screen->id, [
+    if (! isset($screen->id) || ! in_array($screen->id, [
         'toplevel_page_dynamic-blacklist-updater',
         'settings_page_dynamic-blacklist-updater',
         'options-discussion'
